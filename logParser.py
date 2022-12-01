@@ -1,29 +1,36 @@
 import gzip
-import re
+import stringComparer
 
 
 def main():
     i = 0
+    order = [
+            "\d{1,2}-\w{3}-\d{4}", 
+            "\d{1,2}:\d{1,2}:\d{1,2}.\d{1,3}",
+            "\d{1,4}",
+            "\d*ms",
+            ]
     with gzip.open('tomcat.log.gz', 'rb') as fin:
-        bytesRead = fin.readline()
-        while bytesRead:
+        bytesRead: bytes
+        while True:
+            bytesRead = fin.readline()
+            if not bytesRead:
+                break
             i += 1
             firstStr = bytesRead.decode("utf-8")
-
-            matchFirstStr = re.search("\d{1,2}-\w{3}-\d{4} \d{1,2}:\d{1,2}:"\
-                                      "\d{1,2}.\d{1,3}\sWARNING\s\[http-nio-\d*-exec-\d*\]", firstStr)
-            if matchFirstStr:
-                print(matchFirstStr[0])
-                bytesRead = fin.readline()
-                if bytesRead:
-                    SecondStr = bytesRead.decode("utf-8")
-                    matchSecondStr = re.match("[*]{2}\sRequest\shad\sdb\sELAPSED\stime\sof\s:\d*", SecondStr)
-                    if matchSecondStr:
-                        print(matchSecondStr[0])
-                else:
-                    return
-
+            warning = stringComparer.Contains("WARNING", firstStr)
+            if not warning:
+                continue
             bytesRead = fin.readline()
+            if not bytesRead:
+                break
+            SecondStr = bytesRead.decode("utf-8")
+            elapsed = stringComparer.Contains("ELAPSED", SecondStr)
+            if not elapsed:
+                continue
+            arr, boole = stringComparer.SplitByOrder(order, firstStr + SecondStr)
+            print(arr, boole)
+
     fin.close()
     print(i)
 
