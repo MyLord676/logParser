@@ -28,8 +28,8 @@ def main():
             elapsed = stringComparer.Contains("ELAPSED", SecondStr)
             if not elapsed:
                 continue
-            arr, boole = stringComparer.SplitByOrder(order, firstStr + SecondStr)
-            print(arr, boole)
+            arr, all = stringComparer.SplitByOrder(order, firstStr + SecondStr)
+            print(arr, all)
 
     fin.close()
     print(i)
