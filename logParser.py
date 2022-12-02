@@ -1,39 +1,37 @@
-import gzip
-from stringComparer import stringComparer
+from MyLibs.stringComparer import stringComparer
+from MyInterfaces.logReaderInterface import logReader
+from domain.patternLog import patternLog
 
 
-def main():
-    i = 0
-    order = [
-            "\d{1,2}-\w{3}-\d{4}", 
-            "\d{1,2}:\d{1,2}:\d{1,2}.\d{1,3}",
-            "\d{1,4}",
-            "\d*ms",
-            ]
-    with gzip.open('tomcat.log.gz', 'rb') as fin:
-        bytesRead: bytes
+class logParser():
+    def Parse(file: logReader, patterns: "list[patternLog]"):
+        tempLines: "list[str]" = []
+        tempPatterns = patterns.copy()
+
         while True:
-            bytesRead = fin.readline()
-            if not bytesRead:
+            Str = file.readline()
+            if not Str:
                 break
-            i += 1
-            firstStr = bytesRead.decode("utf-8")
-            warning = stringComparer.Contains("WARNING", firstStr)
-            if not warning:
-                continue
-            bytesRead = fin.readline()
-            if not bytesRead:
-                break
-            SecondStr = bytesRead.decode("utf-8")
-            elapsed = stringComparer.Contains("ELAPSED", SecondStr)
-            if not elapsed:
-                continue
-            arr, all = stringComparer.SplitByOrder(order, firstStr + SecondStr)
-            print(arr, all)
+            tempLines.append(Str)
+            #print(tempLines)
 
-    fin.close()
-    print(i)
+            for index, value in enumerate(tempPatterns):
+                i = len(tempLines)
+                if stringComparer.Contains(value.markers[i - 1], tempLines[i - 1]):
+                    if len(value.markers) == i:
+                        tmp = ""
+                        for ind, v in enumerate(tempLines):
+                            if ind <= i - 1:
+                                tmp += v
+                        arr, all = stringComparer.SplitByOrder(value.re, tmp)
 
+                        yield arr, all
+                        tempPatterns.remove(value)
+                else:
+                    tempPatterns.remove(value)
 
-if __name__ == '__main__':
-    main()
+            if len(tempPatterns) == 0:
+                tempLines.clear()
+                tempPatterns = patterns.copy()
+
+        file.close()
