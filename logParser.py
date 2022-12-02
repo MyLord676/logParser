@@ -1,5 +1,5 @@
 import gzip
-import stringComparer
+from stringComparer import stringComparer
 
 
 def main():
