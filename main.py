@@ -11,11 +11,9 @@ def main():
             cfg = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
-    pattern = []
-    for index, value in enumerate(cfg['patterns']):
-        pattern.append(patternLog(value['markers'], value['re']))
     i = 0
-    for arr, all in logParser.Parse(gzReader("tomcat.log.gz"), pattern):
+    for arr, all in logParser.Parse(gzReader("tomcat.log.gz"), 
+                                    patternLog(cfg['markers'], cfg['re'])):
         print(arr, all)
         i += 1
 
