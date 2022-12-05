@@ -20,7 +20,8 @@ class logParser():
 
             for index, value in enumerate(tempPatterns):
                 i = len(tempLines)
-                if stringComparer.Contains(value.markers[i - 1], tempLines[i - 1]):
+                if stringComparer.Contains(value.markers[i - 1],
+                                           tempLines[i - 1]):
                     if len(value.markers) == i:
                         arr, all = stringComparer.SplitByOrder(
                             value.re, ''.join(tempLines))
