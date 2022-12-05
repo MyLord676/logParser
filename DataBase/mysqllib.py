@@ -32,7 +32,6 @@ class mysqllib:
 
     def cleareTable(self, model: Base):
         session = Session(self.engine)
-        num_rows_deleted = session.query(model).delete()
         try:
             num_rows_deleted = session.query(model).delete()
             session.commit()
