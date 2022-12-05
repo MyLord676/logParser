@@ -19,7 +19,3 @@ class stringComparer:
                 arr.append("")
                 allFound = False
         return arr, allFound
-
-
-if __name__ == '__main__':
-    pass
