@@ -6,7 +6,7 @@ from domain.patternLog import patternLog
 class logParser():
     def Parse(logs: logReader, patterns: "list[patternLog]"):
         tempLines: "list[str]" = []
-        tempPatterns = patterns.copy()
+        tempPatterns = frozenset(patterns.copy())
         send = False
         skip = False
         while True:
@@ -18,7 +18,8 @@ class logParser():
             else:
                 skip = False
 
-            for index, value in enumerate(tempPatterns):
+            remove: "list[patternLog]" = []
+            for value in tempPatterns:
                 i = len(tempLines)
                 if stringComparer.Contains(value.markers[i - 1],
                                            tempLines[i - 1]):
@@ -27,20 +28,27 @@ class logParser():
                             value.re, ''.join(tempLines))
 
                         yield arr, all
-                        tempPatterns.remove(value)
+                        remove.append(value)
                         send = True
                 else:
-                    tempPatterns.remove(value)
+                    remove.append(value)
                     send = False
 
-            if len(tempPatterns) == 0:
-                if len(tempLines) > 1 and not send:
-                    temp = tempLines.pop()
-                    tempLines.clear()
-                    tempLines.append(temp)
-                    skip = True
-                else:
-                    tempLines.clear()
-                tempPatterns = patterns.copy()
+            tempPatterns = [item for item in tempPatterns if
+                            item not in remove]
+            remove.clear()
+
+            if len(tempPatterns) != 0:
+                continue
+
+            tempPatterns = patterns.copy()
+
+            if len(tempLines) > 1 and not send:
+                temp = tempLines.pop()
+                tempLines.clear()
+                tempLines.append(temp)
+                skip = True
+            else:
+                tempLines.clear()
 
         logs.close()
