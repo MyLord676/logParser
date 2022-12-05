@@ -1,5 +1,5 @@
 from MyMockInterface.tomcatReader import gzReader
-from logParser import logParser
+from MyLibs.logParser import logParser
 from domain.patternLog import patternLog
 
 
