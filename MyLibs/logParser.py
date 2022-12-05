@@ -4,14 +4,14 @@ from domain.patternLog import patternLog
 
 
 class logParser():
-    def Parse(file: logReader, patterns: "list[patternLog]"):
+    def Parse(logs: logReader, patterns: "list[patternLog]"):
         tempLines: "list[str]" = []
         tempPatterns = patterns.copy()
         send = False
         skip = False
         while True:
             if not skip:
-                Str = file.readline()
+                Str = logs.readline()
                 if not Str:
                     break
                 tempLines.append(Str)
@@ -43,4 +43,4 @@ class logParser():
                     tempLines.clear()
                 tempPatterns = patterns.copy()
 
-        file.close()
+        logs.close()
