@@ -11,8 +11,7 @@ class gzReader(logReader):
         if bytesLine:
             decodeLine = bytesLine.decode("utf-8")
             return decodeLine
-        else:
-            return None
+        return None
 
     def close(self):
         self.file.close()
