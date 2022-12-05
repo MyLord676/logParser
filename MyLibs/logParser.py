@@ -1,10 +1,9 @@
 from MyLibs.stringComparer import stringComparer
 from MyInterfaces.logReaderInterface import logReader
-from domain.patternLog import patternLog
 
 
 class logParser():
-    def Parse(logs: logReader, pattern: "patternLog"):
+    def Parse(logs: logReader, markers: "list[str]", re: "list[str]"):
         tempLines: "list[str]" = []
         skip = False
         while True:
@@ -17,11 +16,11 @@ class logParser():
             skip = False
 
             i = len(tempLines)
-            if stringComparer.Contains(pattern.markers[i - 1],
+            if stringComparer.Contains(markers[i - 1],
                                        tempLines[i - 1]):
-                if len(pattern.markers) == i:
+                if len(markers) == i:
                     arr, all = stringComparer.SplitByOrder(
-                        pattern.re, ''.join(tempLines))
+                        re, ''.join(tempLines))
 
                     yield arr, all
                     tempLines.clear()

@@ -4,7 +4,6 @@ from re import sub
 
 from MyMockInterface.tomcatReader import gzReader
 from MyLibs.logParser import logParser
-from domain.patternLog import patternLog
 from DataBase.mysqllib import mysqllib
 from domain.dataBase import MyWarning
 
@@ -26,7 +25,7 @@ def main():
     insert = 0
     notInsert = 0
     for arr, all in logParser.Parse(gzReader("tomcat.log.gz"),
-                                    patternLog(cfg['markers'], cfg['re'])):
+                                    cfg['markers'], cfg['re']):
         print(arr, all)
         if all:
             war = MyWarning()
